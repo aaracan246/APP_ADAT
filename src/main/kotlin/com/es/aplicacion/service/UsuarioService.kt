@@ -38,8 +38,28 @@ class UsuarioService : UserDetailsService {
 
     fun insertUser(usuarioInsertadoDTO: UsuarioRegisterDTO) : UsuarioDTO? {
 
-        // TODO: Implementar este metodo
-        return null
+        if (usuarioRepository.findByUsername(usuarioInsertadoDTO.username).isPresent){
+            throw Exception("That user exists already.")
+        }
 
+        val nuevoUserRegisterDTO = UsuarioDTO(
+                            username = usuarioInsertadoDTO.username,
+                            email = usuarioInsertadoDTO.email,
+                            rol = usuarioInsertadoDTO.rol,
+                            direccion = usuarioInsertadoDTO.direccion)
+
+
+        val nuevoUser = Usuario(
+                _id = null,
+                username = usuarioInsertadoDTO.username,
+                email = usuarioInsertadoDTO.email,
+                password = passwordEncoder.encode(usuarioInsertadoDTO.password),
+                roles = usuarioInsertadoDTO.rol.toString(),
+                direccion = usuarioInsertadoDTO.direccion
+        )
+
+
+        usuarioRepository.insert(nuevoUser)
+        return nuevoUserRegisterDTO
     }
 }

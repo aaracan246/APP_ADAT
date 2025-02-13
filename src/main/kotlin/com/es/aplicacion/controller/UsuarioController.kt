@@ -16,9 +16,11 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.AuthenticationException
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
+@RequestMapping("/usuarios")
 class UsuarioController {
 
     @Autowired
@@ -34,9 +36,25 @@ class UsuarioController {
         @RequestBody usuarioRegisterDTO: UsuarioRegisterDTO
     ) : ResponseEntity<UsuarioDTO>?{
 
-        // TODO: Implementar este metodo
+        if (usuarioRegisterDTO.username.isEmpty()){
+            throw Exception("Username cannot be empty.")
+        }
+        else if (usuarioRegisterDTO.email.isEmpty()){
+            throw Exception("Email cannot be empty.")
+        }
+        else if (usuarioRegisterDTO.password.isEmpty()){
+            throw Exception("Password cannot be empty.")
+        }
+        else if (usuarioRegisterDTO.passwordRepeat.isEmpty() && usuarioRegisterDTO.passwordRepeat != usuarioRegisterDTO.password ){
+            throw Exception("PasswordR cannot be empty nor different than the previous one.")
+        }
+        else if (usuarioRegisterDTO.rol?.isEmpty() == true){
+            throw Exception("Rol cannot be empty.")
+        }
 
-        return ResponseEntity(null, HttpStatus.CREATED)
+        val nuevoUser= usuarioService.insertUser(usuarioRegisterDTO)
+
+        return ResponseEntity(nuevoUser, HttpStatus.CREATED)
 
     }
 
